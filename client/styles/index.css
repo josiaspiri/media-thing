@@ -2,11 +2,28 @@
 @import "./fonts.css";
 
 :root {
-  font-size: 16px;
+  font-size: 18px;
 }
 
 body {
   font-family: "Atkinson Hyperlegible Next", sans-serif;
   color: #bfc7cd;
   background: #141414;
+}
+
+main {
+  max-width: 800px;
+  margin: auto;
+  padding: 0 1rem;
+}
+
+video {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16/9;
+  background: #000;
+}
+
+h1 {
+  font-size: 2rem;
 }
