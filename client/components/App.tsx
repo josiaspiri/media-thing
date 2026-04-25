@@ -1,7 +1,7 @@
-export function App() {
+export const App = () => {
   return (
     <div>
       <h1>Media Thing</h1>
     </div>
   );
-}
+};
