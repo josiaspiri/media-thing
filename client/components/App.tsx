@@ -20,9 +20,9 @@ export const App = () => {
     loadVideos();
   }, []);
 
-  useEffect(()=>{
+  useEffect(() => {
     videoRef.current?.play();
-  }, [source])
+  }, [source]);
 
   return (
     <main>
@@ -36,7 +36,7 @@ export const App = () => {
               key={video}
               onClick={() => setSource(`/video/${video}`)}
             >
-              {video.split("/").pop()?.split('.').shift()}
+              {video.split("/").pop()?.split(".").shift()}
             </button>
           </li>
         ))}
