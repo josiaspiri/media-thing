@@ -3,12 +3,25 @@ import index from "@/client/index.html";
 import { DEFAULTS } from "./config";
 import { RESPONSES } from "./responses";
 import * as path from "node:path";
+import { FileService } from "./file.service";
+import { LocalStorageAdapter } from "./storage/local";
 
 const mediaDir = path.resolve(DEFAULTS.MEDIA_DIRECTORY);
+const fileService = new FileService(
+  new LocalStorageAdapter(),
+  DEFAULTS.MEDIA_DIRECTORY,
+  DEFAULTS.SUPPORTED_FORMATS,
+);
 
 const server = serve({
   routes: {
     "/*": index,
+    "/api/videos": {
+      GET: async () => {
+        const videos = await fileService.getFiles();
+        return Response.json(videos);
+      },
+    },
     "/video/*": {
       GET: async (req) => {
         const { pathname } = new URL(req.url);
