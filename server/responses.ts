@@ -1,14 +1,9 @@
 export const RESPONSES = {
-  UNSATISFIABLE: (totalSize?: number) => {
-    const headers = totalSize !== undefined
-      ? { "Content-Range": `bytes */${totalSize}` }
-      : undefined;
-
-    return Response.json({ error: "Range unsatisfiable." }, {
+  UNSATISFIABLE: (totalSize: number) =>
+    Response.json({ error: "Range unsatisfiable." }, {
       status: 416,
-      headers,
-    });
-  },
+      headers: { "Content-Range": `bytes */${totalSize}` },
+    }),
 
   NOT_FOUND: () => Response.json({ error: "File not found." }, { status: 404 }),
 
