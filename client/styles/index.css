@@ -1,0 +1,12 @@
+@import "the-new-css-reset";
+@import "./fonts.css";
+
+:root {
+  font-size: 16px;
+}
+
+body {
+  font-family: "Atkinson Hyperlegible Next", sans-serif;
+  color: #bfc7cd;
+  background: #141414;
+}

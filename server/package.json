@@ -1,0 +1,5 @@
+{
+  "name": "media-thing-server",
+  "private": true,
+  "devDependencies": { "@types/bun": "latest" }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "media-thing",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "bun --hot server/index.ts",
+    "start": "NODE_ENV=production bun server/index.ts"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "typescript": "6.0.3"
+  },
+  "workspaces": ["client", "server"]
+}
