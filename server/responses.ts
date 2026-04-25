@@ -11,4 +11,6 @@ export const RESPONSES = {
   },
 
   NOT_FOUND: () => Response.json({ error: "File not found." }, { status: 404 }),
+
+  FORBIDDEN: () => Response.json({ error: "Forbidden." }, { status: 403 }),
 } as const;
