@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { RESPONSES } from "../responses";
+import { RESPONSES } from "../lib/responses";
 
 describe("responses.unsatisfiable", () => {
   test("responds with 416", () => {

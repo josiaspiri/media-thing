@@ -1,7 +1,7 @@
 import { serve } from "bun";
 import index from "@/client/index.html";
 import { DEFAULTS } from "./config";
-import { RESPONSES } from "./responses";
+import { RESPONSES } from "./lib/responses";
 import * as path from "node:path";
 import { FileService } from "./file.service";
 import { LocalStorageAdapter } from "./storage/local";
