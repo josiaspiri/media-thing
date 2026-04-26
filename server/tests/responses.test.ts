@@ -7,6 +7,8 @@ describe("responses.unsatisfiable", () => {
   });
 
   test("responds with appropriate range header", () => {
-    expect(RESPONSES.UNSATISFIABLE(123).headers.get("Content-Range")).toBe("bytes */123");
+    expect(RESPONSES.UNSATISFIABLE(123).headers.get("Content-Range")).toBe(
+      "bytes */123",
+    );
   });
 });
