@@ -31,9 +31,8 @@ export const App = () => {
 
       <ul>
         {videos?.map((video) => (
-          <li>
+          <li key={video}>
             <button
-              key={video}
               onClick={() => setSource(`/video/${video}`)}
             >
               {video.split("/").pop()?.split(".").shift()}
