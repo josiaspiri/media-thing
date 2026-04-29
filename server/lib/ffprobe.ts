@@ -1,14 +1,9 @@
-export const probeMedia = async (filepath: string) => {
-  const proc = Bun.spawn([
-    "ffprobe",
-    "-v",
-    "quiet",
-    "-print_format",
-    "json",
-    "-show_streams",
-    filepath,
-  ], { stderr: "ignore", stdout: "pipe" });
+const ffprobe = async <T = any>(args: string[]): Promise<T> => {
+  const proc = Bun.spawn(
+    ["ffprobe", "-v", "quiet", "-print_format", "json", ...args],
+    { stderr: "ignore", stdout: "pipe" },
+  );
   const [data, code] = await Promise.all([proc.stdout.json(), proc.exited]);
-  if (code !== 0) throw new Error(`ffprobe exited with code ${code}`);
+  if (code !== 0) throw new Error(`ffprobe error ${code}`);
   return data;
 };
