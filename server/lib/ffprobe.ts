@@ -7,3 +7,19 @@ const ffprobe = async <T = any>(args: string[]): Promise<T> => {
   if (code !== 0) throw new Error(`ffprobe error ${code}`);
   return data;
 };
+
+export const getVideoStreams = async (filepath: string) => {
+  const data = await ffprobe<{ streams: Record<string, number | string>[] }>([
+    "-show_streams",
+    filepath,
+  ]);
+  return data.streams;
+};
+
+export const getVideoDuration = async (inputPath: string) => {
+  const data = await ffprobe<{ format: { duration: string } }>([
+    "-show_format",
+    inputPath,
+  ]);
+  return parseFloat(data.format.duration);
+};
