@@ -1,3 +1,4 @@
+import HLS from "hls.js";
 import { useEffect, useRef, useState } from "react";
 import { getVideos } from "../services/api.service";
 import type { Video } from "../types";
@@ -21,7 +22,29 @@ export const App = () => {
   }, []);
 
   useEffect(() => {
-    videoRef.current?.play();
+    const video = videoRef.current;
+    if (!video || !source) return;
+
+    if (!source.endsWith(".mkv")) {
+      video.src = `/video/${source}`;
+      video.play();
+
+      return () => {
+        video.pause();
+        video.removeAttribute("src");
+        video.load();
+      };
+    }
+
+    const hlsSrc = `/hls-video/${source}/index.m3u8`;
+
+    if (HLS.isSupported()) {
+      const hls = new HLS();
+      hls.loadSource(hlsSrc);
+      hls.attachMedia(video);
+      hls.once(HLS.Events.MANIFEST_PARSED, () => video.play());
+      return () => hls.destroy();
+    }
   }, [source]);
 
   return (
@@ -32,9 +55,7 @@ export const App = () => {
       <ul>
         {videos?.map((video) => (
           <li key={video}>
-            <button
-              onClick={() => setSource(`/video/${video}`)}
-            >
+            <button onClick={() => setSource(video)}>
               {video.split("/").pop()?.split(".").shift()}
             </button>
           </li>
