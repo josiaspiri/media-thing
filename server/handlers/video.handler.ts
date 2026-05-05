@@ -2,13 +2,11 @@ import type { BunRequest } from "bun";
 import * as path from "node:path";
 import { RESPONSES } from "../lib/responses";
 import { DEFAULTS } from "../config";
-import { LocalStorageAdapter } from "../storage/local";
 import { FileService } from "../file.service";
 
 const mediaDir = path.resolve(DEFAULTS.MEDIA_DIRECTORY);
 
 const fileService = new FileService(
-  new LocalStorageAdapter(),
   DEFAULTS.MEDIA_DIRECTORY,
   DEFAULTS.SUPPORTED_FORMATS,
 );

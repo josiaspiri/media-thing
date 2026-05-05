@@ -1,10 +1,8 @@
 import * as path from "node:path";
-import type { StorageAdapter } from "./storage/interface";
 import { createHash } from "node:crypto";
 
 export class FileService {
   constructor(
-    private readonly storage: StorageAdapter,
     private readonly directory: string,
     private readonly formats: readonly string[],
   ) {}
@@ -30,7 +28,9 @@ export class FileService {
   }
 
   async getFiles(): Promise<string[]> {
-    return await this.storage.list(this.directory, this.formats);
+    const dir = path.resolve(this.directory);
+    const glob = new Bun.Glob(`**/*.{${this.formats.join(",")}}`);
+    return await Array.fromAsync(glob.scan({ cwd: dir }));
   }
 
   async getFileRefs(): Promise<{ id: string; filename: string }[]> {
