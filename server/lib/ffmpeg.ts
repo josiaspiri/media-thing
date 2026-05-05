@@ -1,5 +1,6 @@
 import { DEFAULTS } from "../config";
 import { getVideoDuration } from "./ffprobe";
+import * as path from "node:path";
 
 const { SEGMENT_DURATION } = DEFAULTS;
 
@@ -27,4 +28,58 @@ export const generatePlaylist = async (filepath: string) => {
   return [header, await generatePlaylistSegments(filepath), terminator].join(
     "\n",
   );
+};
+
+export const transcodeSegment = async (
+  filepath: string,
+  segmentIndex: number,
+  segmentDuration: number,
+  fileDuration: number,
+) => {
+  const start = segmentIndex * segmentDuration;
+  const end = Math.min(start + segmentDuration, fileDuration);
+  const outFile = path.join(
+    DEFAULTS.SCRATCH_DIRECTORY,
+    `${String(segmentIndex).padStart(4, "0")}.ts`,
+  );
+
+  if (await Bun.file(outFile).exists()) return Bun.file(outFile);
+
+  const proc = Bun.spawn([
+    "ffmpeg",
+    "-ss",
+    String(start),
+    "-i",
+    filepath,
+    "-to",
+    String(end),
+    "-map",
+    "0:v:0",
+    "-map",
+    "0:a:0",
+    "-sn",
+    "-c:v",
+    "libx264",
+    "-preset",
+    "ultrafast",
+    "-tune",
+    "zerolatency",
+    "-crf",
+    "20",
+    "-pix_fmt",
+    "yuv420p",
+    "-profile:v",
+    "main",
+    "-c:a",
+    "aac",
+    "-ac",
+    "2",
+    "-copyts",
+    "-f",
+    "mpegts",
+    "-y",
+    outFile,
+  ], { stderr: "ignore", stdin: "ignore", stdout: "ignore" });
+  await proc.exited;
+  return Bun.file(outFile);
 };
