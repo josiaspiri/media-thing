@@ -1,6 +1,7 @@
 import * as path from "node:path";
 import { createHash } from "node:crypto";
 import { DEFAULTS } from "./config";
+import { MEDIA_DIR, mediaPath } from "./lib/paths";
 import { getVideoDuration } from "./lib/ffprobe";
 
 type FileInfo = { filename: string; filepath: string; duration?: number };
@@ -24,9 +25,7 @@ export class FileService {
     const files = await this.getFiles();
     for (const file of files) {
       const id = this.path2id(file);
-      const duration = await getVideoDuration(
-        path.join(DEFAULTS.MEDIA_DIRECTORY, file),
-      );
+      const duration = await getVideoDuration(mediaPath(file));
       this.cache.set(id, {
         filename: path.basename(file),
         filepath: file,
@@ -36,9 +35,8 @@ export class FileService {
   }
 
   async getFiles(): Promise<string[]> {
-    const dir = path.resolve(this.directory);
     const glob = new Bun.Glob(`**/*.{${this.formats.join(",")}}`);
-    return await Array.fromAsync(glob.scan({ cwd: dir }));
+    return await Array.fromAsync(glob.scan({ cwd: this.directory }));
   }
 
   async getFileRefs(): Promise<{ id: string; filename: string }[]> {
@@ -69,6 +67,6 @@ export class FileService {
 }
 
 export const fileService = new FileService(
-  DEFAULTS.MEDIA_DIRECTORY,
+  MEDIA_DIR,
   DEFAULTS.SUPPORTED_FORMATS,
 );

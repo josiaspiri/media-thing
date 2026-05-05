@@ -1,6 +1,6 @@
 import { DEFAULTS } from "../config";
 import { getVideoDuration } from "./ffprobe";
-import * as path from "node:path";
+import { scratchSegmentPath } from "./paths";
 
 const { SEGMENT_DURATION } = DEFAULTS;
 
@@ -35,13 +35,11 @@ export const transcodeSegment = async (
   segmentIndex: number,
   segmentDuration: number,
   fileDuration: number,
+  videoRef: string,
 ) => {
   const start = segmentIndex * segmentDuration;
   const end = Math.min(start + segmentDuration, fileDuration);
-  const outFile = path.join(
-    DEFAULTS.SCRATCH_DIRECTORY,
-    `${String(segmentIndex).padStart(4, "0")}.ts`,
-  );
+  const outFile = scratchSegmentPath(videoRef, segmentIndex);
 
   if (await Bun.file(outFile).exists()) return Bun.file(outFile);
 

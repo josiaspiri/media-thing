@@ -3,7 +3,7 @@ import { generatePlaylist, transcodeSegment } from "../lib/ffmpeg";
 import { fileService } from "../file.service";
 import { RESPONSES } from "../lib/responses";
 import { DEFAULTS } from "../config";
-import * as path from "node:path";
+import { mediaPath } from "../lib/paths";
 
 export const getHlsPlaylist = async (
   req: BunRequest<"/hls-video/:videoRef/index.m3u8">,
@@ -13,7 +13,7 @@ export const getHlsPlaylist = async (
   const filepath = fileInfo?.filepath;
   if (!filepath) return RESPONSES.NOT_FOUND();
   return new Response(
-    await generatePlaylist(path.join(DEFAULTS.MEDIA_DIRECTORY, filepath)),
+    await generatePlaylist(mediaPath(filepath)),
   );
 };
 
@@ -28,10 +28,11 @@ export const getHlsSegment = async (
   const { filepath, duration } = fileInfo;
   if (!duration) return RESPONSES.NOT_FOUND();
   const outputSegment = await transcodeSegment(
-    path.join(DEFAULTS.MEDIA_DIRECTORY, filepath),
+    mediaPath(filepath),
     segmentIndex,
     DEFAULTS.SEGMENT_DURATION,
     duration,
+    videoRef,
   );
   return new Response(outputSegment.stream(), {
     headers: { "Content-Type": "video/mp2t" },
