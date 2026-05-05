@@ -9,7 +9,7 @@ const generatePlaylistSegments = async (filepath: string) => {
 
   return Array.from({ length: count }, (_, i) => {
     const remainder = duration - i * SEGMENT_DURATION;
-    return `#EXTINF:${Math.min(remainder, SEGMENT_DURATION).toFixed(6)},\n${
+    return `#EXTINF:${Math.min(remainder, SEGMENT_DURATION).toFixed(3)},\n${
       String(i).padStart(4, "0")
     }.ts`;
   }).join("\n");
