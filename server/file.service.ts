@@ -25,7 +25,8 @@ export class FileService {
     const files = await this.getFiles();
     for (const file of files) {
       const id = this.path2id(file);
-      const duration = await getVideoDuration(path.join(this.directory, file));
+      const duration = await getVideoDuration(path.join(this.directory, file))
+        .catch(() => undefined);
       this.cache.set(id, {
         filename: path.basename(file),
         filepath: file,
