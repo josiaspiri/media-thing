@@ -2,20 +2,18 @@ import type { BunRequest } from "bun";
 import * as path from "node:path";
 import { RESPONSES } from "../lib/responses";
 import { DEFAULTS } from "../config";
-import { FileService } from "../file.service";
+import { fileService } from "../file.service";
 
 const mediaDir = path.resolve(DEFAULTS.MEDIA_DIRECTORY);
 
-const fileService = new FileService(
-  DEFAULTS.MEDIA_DIRECTORY,
-  DEFAULTS.SUPPORTED_FORMATS,
-);
+export const getSupportedStream = async (
+  req: BunRequest<"/video/:videoId">,
+) => {
+  const { videoId } = req.params;
+  const videoInfo = fileService.getByRef(videoId);
+  if (!videoInfo) return RESPONSES.NOT_FOUND();
 
-export const getSupportedStream = async (req: BunRequest) => {
-  const { pathname } = new URL(req.url);
-  const requestPath = pathname.slice("/video/".length);
-
-  const resolved = path.resolve(mediaDir, requestPath);
+  const resolved = path.resolve(mediaDir, videoInfo.filepath);
   if (!resolved.startsWith(mediaDir + path.sep)) {
     return RESPONSES.NOT_FOUND();
   }
@@ -67,7 +65,5 @@ export const getSupportedStream = async (req: BunRequest) => {
   });
 };
 
-export const getVideosApi = async () => {
-  const videos = await fileService.getFiles();
-  return Response.json(videos);
-};
+export const getVideosApi = async () =>
+  Response.json(await fileService.getFileRefs());

@@ -1,5 +1,9 @@
 import * as path from "node:path";
 import { createHash } from "node:crypto";
+import { DEFAULTS } from "./config";
+import { getVideoDuration } from "./lib/ffprobe";
+
+type FileInfo = { filename: string; filepath: string; duration?: number };
 
 export class FileService {
   constructor(
@@ -9,7 +13,7 @@ export class FileService {
 
   private cache: Map<
     string,
-    { filename: string; filepath: string }
+    FileInfo
   > = new Map();
 
   private path2id(filepath: string): string {
@@ -20,9 +24,13 @@ export class FileService {
     const files = await this.getFiles();
     for (const file of files) {
       const id = this.path2id(file);
+      const duration = await getVideoDuration(
+        path.join(DEFAULTS.MEDIA_DIRECTORY, file),
+      );
       this.cache.set(id, {
         filename: path.basename(file),
         filepath: file,
+        duration,
       });
     }
   }
@@ -35,10 +43,17 @@ export class FileService {
 
   async getFileRefs(): Promise<{ id: string; filename: string }[]> {
     if (this.cache.size === 0) await this.populateCache();
-    return [...this.cache.entries()].map(([id, { filename }]) => ({
+    return [...this.cache.entries()].map(([id, { filename, duration }]) => ({
       id,
       filename,
+      duration,
     }));
+  }
+
+  getByRef(ref: string): FileInfo | undefined {
+    const fileInfo = this.cache.get(ref);
+    if (!fileInfo) return undefined;
+    return this.cache.get(ref);
   }
 
   async getDirectories(): Promise<string[]> {
@@ -52,3 +67,8 @@ export class FileService {
     return [...dirs];
   }
 }
+
+export const fileService = new FileService(
+  DEFAULTS.MEDIA_DIRECTORY,
+  DEFAULTS.SUPPORTED_FORMATS,
+);

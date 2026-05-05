@@ -4,7 +4,7 @@ import { getVideos } from "../services/api.service";
 import type { Video } from "../types";
 
 export const App = () => {
-  const [source, setSource] = useState<Video | undefined>(undefined);
+  const [video, setVideo] = useState<Video | undefined>(undefined);
   const [videos, setVideos] = useState<Video[] | undefined>(undefined);
   const videoRef = useRef<HTMLVideoElement | null>(null);
 
@@ -22,41 +22,41 @@ export const App = () => {
   }, []);
 
   useEffect(() => {
-    const video = videoRef.current;
-    if (!video || !source) return;
-
-    if (!source.endsWith(".mkv")) {
-      video.src = `/video/${source}`;
-      video.play();
+    const videoElm = videoRef.current;
+    if (!videoElm || !video) return;
+    const { filename, id } = video;
+    if (!filename.endsWith(".mkv")) {
+      videoElm.src = `/video/${id}`;
+      videoElm.play();
 
       return () => {
-        video.pause();
-        video.removeAttribute("src");
-        video.load();
+        videoElm.pause();
+        videoElm.removeAttribute("src");
+        videoElm.load();
       };
     }
 
-    const hlsSrc = `/hls-video/${source}/index.m3u8`;
+    const hlsSrc = `/hls-video/${id}/index.m3u8`;
 
     if (HLS.isSupported()) {
       const hls = new HLS();
       hls.loadSource(hlsSrc);
-      hls.attachMedia(video);
-      hls.once(HLS.Events.MANIFEST_PARSED, () => video.play());
+      hls.attachMedia(videoElm);
+      hls.once(HLS.Events.MANIFEST_PARSED, () => videoElm.play());
       return () => hls.destroy();
     }
-  }, [source]);
+  }, [video]);
 
   return (
     <main>
       <h1>Media Thing</h1>
-      {source && <video ref={videoRef} src={source} controls />}
+      <video ref={videoRef} controls />
 
       <ul>
         {videos?.map((video) => (
-          <li key={video}>
-            <button onClick={() => setSource(video)}>
-              {video.split("/").pop()?.split(".").shift()}
+          <li key={video.id}>
+            <button onClick={() => setVideo(video)}>
+              {video.filename}
             </button>
           </li>
         ))}

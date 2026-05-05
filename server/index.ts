@@ -1,15 +1,27 @@
 import { serve } from "bun";
 import index from "@/client/index.html";
 import { getSupportedStream, getVideosApi } from "./handlers/video.handler";
+import { DEFAULTS } from "./config";
+import { RESPONSES } from "./lib/responses";
+import { getHlsPlaylist, getHlsSegment } from "./handlers/hls.handler";
 
 const server = serve({
   routes: {
-    "/*": index,
+    "/": index,
     "/api/videos": {
       GET: getVideosApi,
     },
-    "/video/*": {
+    "/video/:videoId": {
       GET: getSupportedStream,
+    },
+    "/hls-video/:videoRef/index.m3u8": {
+      GET: getHlsPlaylist,
+    },
+    "/hls-video/:videoRef/:segment": {
+      GET: getHlsSegment,
+    },
+    "/*": {
+      GET: RESPONSES.NOT_FOUND(),
     },
   },
 

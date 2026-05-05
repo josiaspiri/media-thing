@@ -1,8 +1,8 @@
 export const RESPONSES = {
-  UNSATISFIABLE: (totalSize: number) =>
+  UNSATISFIABLE: (size: number) =>
     Response.json({ error: "Range unsatisfiable." }, {
       status: 416,
-      headers: { "Content-Range": `bytes */${totalSize}` },
+      headers: { "Content-Range": `bytes */${size}` },
     }),
 
   NOT_FOUND: () => Response.json({ error: "File not found." }, { status: 404 }),

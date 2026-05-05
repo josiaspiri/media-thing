@@ -1,1 +1,1 @@
-export type Video = string;
+export type Video = { id: string; filename: string };
