@@ -1,7 +1,6 @@
 import { serve } from "bun";
 import index from "@/client/index.html";
 import { getSupportedStream, getVideosApi } from "./handlers/video.handler";
-import { DEFAULTS } from "./config";
 import { RESPONSES } from "./lib/responses";
 import { getHlsPlaylist, getHlsSegment } from "./handlers/hls.handler";
 
