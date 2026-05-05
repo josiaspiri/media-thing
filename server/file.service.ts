@@ -1,7 +1,7 @@
 import * as path from "node:path";
 import { createHash } from "node:crypto";
 import { DEFAULTS } from "./config";
-import { MEDIA_DIR, mediaPath } from "./lib/paths";
+import { MEDIA_DIR } from "./lib/paths";
 import { getVideoDuration } from "./lib/ffprobe";
 
 type FileInfo = { filename: string; filepath: string; duration?: number };
@@ -25,7 +25,7 @@ export class FileService {
     const files = await this.getFiles();
     for (const file of files) {
       const id = this.path2id(file);
-      const duration = await getVideoDuration(mediaPath(file));
+      const duration = await getVideoDuration(path.join(this.directory, file));
       this.cache.set(id, {
         filename: path.basename(file),
         filepath: file,
