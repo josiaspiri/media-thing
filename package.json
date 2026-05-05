@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "bun --hot server/index.ts",
-    "start": "NODE_ENV=production bun server/index.ts"
+    "start": "NODE_ENV=production bun server/index.ts",
+    "build:mac-x64": "bun build --compile --target bun-darwin-x64 --minify --bytecode ./server/index.ts --outfile dist/video-thing-mac-x64",
+    "build:linux": "bun build --compile --target bun-linux-x64 --minify --bytecode ./server/index.ts --outfile dist/video-thing-linux"
   },
   "devDependencies": {
     "@types/bun": "latest",
