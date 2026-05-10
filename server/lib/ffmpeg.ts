@@ -1,3 +1,5 @@
+import { mkdir } from "node:fs";
+import * as path from "node:path";
 import { DEFAULTS } from "../config";
 import { getVideoDuration } from "./ffprobe";
 import { scratchSegmentPath } from "./paths";
@@ -42,6 +44,7 @@ export const transcodeSegment = async (
   const outFile = scratchSegmentPath(videoRef, segmentIndex);
 
   if (await Bun.file(outFile).exists()) return Bun.file(outFile);
+  mkdir(path.dirname(outFile), { recursive: true }, () => undefined);
 
   const proc = Bun.spawn([
     "ffmpeg",
