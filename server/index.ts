@@ -30,9 +30,7 @@ const server = serve({
       const upgradeHeader = req.headers.get("upgrade");
       if (upgradeHeader === "websocket") {
         const success = server.upgrade(req);
-        return success
-          ? undefined
-          : new Response("WebSocket error", { status: 400 });
+        return success ? undefined : RESPONSES.BAD_REQUEST();
       } else {
         return RESPONSES.NOT_FOUND();
       }
