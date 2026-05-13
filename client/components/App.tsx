@@ -10,6 +10,24 @@ export const App = () => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
 
   useEffect(() => {
+    const { host, protocol } = window.location;
+    const wsProtocol = protocol === "https:" ? "wss:" : "ws:";
+    const socket = new WebSocket(`${wsProtocol}//${host}/ws`);
+
+    if (wsRef.current) return;
+    wsRef.current = socket;
+
+    socket.onopen = () => {};
+    socket.onmessage = (event) => {};
+    socket.onerror = (err) => {};
+
+    return () => {
+      socket.close(1000);
+      wsRef.current = null;
+    };
+  }, []);
+
+  useEffect(() => {
     const loadVideos = async () => {
       try {
         const data = await getVideos();

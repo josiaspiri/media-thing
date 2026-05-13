@@ -24,6 +24,32 @@ const server = serve({
     },
   },
 
+  fetch(req, server) {
+    const url = new URL(req.url);
+    if (url.pathname === "/ws") {
+      const upgradeHeader = req.headers.get("upgrade");
+      if (upgradeHeader === "websocket") {
+        const success = server.upgrade(req);
+        return success
+          ? undefined
+          : new Response("WebSocket error", { status: 400 });
+      } else {
+        return RESPONSES.NOT_FOUND();
+      }
+    }
+  },
+
+  websocket: {
+    message(ws, message) {},
+    open(ws) {},
+    close(ws, code, reason) {},
+    drain(ws) {},
+    ping(ws, data) {},
+    pong(ws, data) {},
+    sendPings: true,
+    idleTimeout: 30,
+  },
+
   development: process.env.NODE_ENV !== "production" && {
     hmr: true,
     console: true,
