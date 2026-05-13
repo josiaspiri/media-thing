@@ -4,8 +4,9 @@ import { getVideos } from "../services/api.service";
 import type { Video } from "../types";
 
 export const App = () => {
-  const [video, setVideo] = useState<Video | undefined>(undefined);
-  const [videos, setVideos] = useState<Video[] | undefined>(undefined);
+  const wsRef = useRef<WebSocket | null>(null);
+  const [video, setVideo] = useState<Video | null>(null);
+  const [videos, setVideos] = useState<Video[] | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
 
   useEffect(() => {
