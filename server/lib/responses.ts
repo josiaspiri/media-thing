@@ -5,7 +5,7 @@ export const RESPONSES = {
       headers: { "Content-Range": `bytes */${size}` },
     }),
 
-  NOT_FOUND: () => Response.json({ error: "File not found." }, { status: 404 }),
+  NOT_FOUND: () => Response.json({ error: "Not found." }, { status: 404 }),
 
   FORBIDDEN: () => Response.json({ error: "Forbidden." }, { status: 403 }),
 } as const;
