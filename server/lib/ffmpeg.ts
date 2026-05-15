@@ -2,7 +2,7 @@ import { mkdir } from "node:fs";
 import * as path from "node:path";
 import { DEFAULTS } from "../config";
 import { getVideoDuration } from "./ffprobe";
-import { scratchSegmentPath } from "./paths";
+import { SCRATCH_DIR, scratchSegmentPath } from "./paths";
 
 const { SEGMENT_DURATION } = DEFAULTS;
 
@@ -81,6 +81,28 @@ export const transcodeSegment = async (
     "-f",
     "mpegts",
     "-y",
+    outFile,
+  ], { stderr: "ignore", stdin: "ignore", stdout: "ignore" });
+  await proc.exited;
+  return Bun.file(outFile);
+};
+
+export const extractSubtitles = async (
+  videoRef: string,
+  filepath: string,
+  subsTrack: number,
+) => {
+  const outFile = path.join(SCRATCH_DIR, videoRef, "subtitles.vtt");
+
+  if (await Bun.file(outFile).exists()) return Bun.file(outFile);
+  mkdir(path.dirname(outFile), { recursive: true }, () => undefined);
+  
+  const proc = Bun.spawn([
+    "ffmpeg",
+    "-i",
+    filepath,
+    "-map",
+    `0:s:${subsTrack}`,
     outFile,
   ], { stderr: "ignore", stdin: "ignore", stdout: "ignore" });
   await proc.exited;
