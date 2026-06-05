@@ -19,9 +19,6 @@ const server = serve({
     "/hls-video/:videoRef/:segment": {
       GET: getHlsSegment,
     },
-    "/*": {
-      GET: RESPONSES.NOT_FOUND(),
-    },
   },
 
   fetch(req, server) {
@@ -35,6 +32,7 @@ const server = serve({
         return RESPONSES.NOT_FOUND();
       }
     }
+    return RESPONSES.NOT_FOUND();
   },
 
   websocket: {
