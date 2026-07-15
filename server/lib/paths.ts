@@ -16,3 +16,12 @@ export const scratchSegmentPath = (videoRef: string, segmentIndex: number) =>
     videoRef,
     `${String(segmentIndex).padStart(4, "0")}.ts`,
   );
+
+export const isSubdir = (parent: string, child: string) => {
+  const relative = path.relative(
+    path.resolve(parent),
+    path.resolve(child),
+  );
+
+  return !relative.startsWith("..") && !path.isAbsolute(relative);
+};
