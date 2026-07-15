@@ -1,7 +1,8 @@
 import * as path from "node:path";
 import { createHash } from "node:crypto";
 import { DEFAULTS } from "./config";
-import { MEDIA_DIR } from "./lib/paths";
+import { isSubdir, MEDIA_DIR, SCRATCH_DIR } from "./lib/paths";
+import { watch } from "node:fs/promises";
 import { getVideoDuration } from "./lib/ffprobe";
 
 type FileInfo = { filename: string; filepath: string; duration?: number };
@@ -10,7 +11,27 @@ export class FileService {
   constructor(
     private readonly directory: string,
     private readonly formats: readonly string[],
-  ) {}
+    private readonly useFsWatcher: boolean = true,
+  ) {
+    if (this.useFsWatcher) {
+      this.setupWatcher();
+    }
+  }
+
+  private async setupWatcher() {
+    const watcher = watch(this.directory, {
+      recursive: true,
+    });
+
+    for await (const event of watcher) {
+      if (!event.filename) continue;
+
+      const filePath = path.join(this.directory, event.filename);
+      if (!isSubdir(SCRATCH_DIR, filePath)) continue;
+
+      this.populateCache();
+    }
+  }
 
   private cache: Map<
     string,
