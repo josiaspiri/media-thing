@@ -2,7 +2,9 @@ import * as path from "node:path";
 import { DEFAULTS } from "../config";
 
 const IS_EXECUTABLE = process.argv0 !== "bun";
-const CWD = IS_EXECUTABLE ? path.dirname(process.execPath) : process.cwd();
+export const CWD = IS_EXECUTABLE
+  ? path.dirname(process.execPath)
+  : process.cwd();
 
 export const MEDIA_DIR = path.resolve(CWD, DEFAULTS.MEDIA_DIRECTORY);
 export const SCRATCH_DIR = path.resolve(CWD, DEFAULTS.SCRATCH_DIRECTORY);

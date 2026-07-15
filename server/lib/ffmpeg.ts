@@ -12,6 +12,7 @@ const generatePlaylistSegments = async (filepath: string) => {
 
   return Array.from({ length: count }, (_, i) => {
     const remainder = duration - i * SEGMENT_DURATION;
+
     return `#EXTINF:${Math.min(remainder, SEGMENT_DURATION).toFixed(3)},\n${
       String(i).padStart(4, "0")
     }.ts`;
@@ -42,8 +43,8 @@ export const transcodeSegment = async (
   const start = segmentIndex * segmentDuration;
   const end = Math.min(start + segmentDuration, fileDuration);
   const outFile = scratchSegmentPath(videoRef, segmentIndex);
-
   if (await Bun.file(outFile).exists()) return Bun.file(outFile);
+
   mkdir(path.dirname(outFile), { recursive: true }, () => undefined);
 
   const proc = Bun.spawn([
@@ -83,7 +84,9 @@ export const transcodeSegment = async (
     "-y",
     outFile,
   ], { stderr: "ignore", stdin: "ignore", stdout: "ignore" });
+
   await proc.exited;
+
   return Bun.file(outFile);
 };
 
@@ -93,10 +96,10 @@ export const extractSubtitles = async (
   subsTrack: number,
 ) => {
   const outFile = path.join(SCRATCH_DIR, videoRef, "subtitles.vtt");
-
   if (await Bun.file(outFile).exists()) return Bun.file(outFile);
+
   mkdir(path.dirname(outFile), { recursive: true }, () => undefined);
-  
+
   const proc = Bun.spawn([
     "ffmpeg",
     "-i",
@@ -105,6 +108,8 @@ export const extractSubtitles = async (
     `0:s:${subsTrack}`,
     outFile,
   ], { stderr: "ignore", stdin: "ignore", stdout: "ignore" });
+
   await proc.exited;
+
   return Bun.file(outFile);
 };

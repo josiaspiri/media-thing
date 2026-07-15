@@ -11,7 +11,9 @@ export const getHlsPlaylist = async (
   const videoRef = req.params.videoRef;
   const fileInfo = fileService.getByRef(videoRef);
   const filepath = fileInfo?.filepath;
+
   if (!filepath) return RESPONSES.NOT_FOUND();
+
   return new Response(
     await generatePlaylist(mediaPath(filepath)),
   );
@@ -25,8 +27,10 @@ export const getHlsSegment = async (
   const segmentIndex = parseInt(segmentMatch);
   const fileInfo = fileService.getByRef(videoRef);
   if (!fileInfo) return RESPONSES.NOT_FOUND();
+
   const { filepath, duration } = fileInfo;
   if (!duration) return RESPONSES.NOT_FOUND();
+
   const outputSegment = await transcodeSegment(
     mediaPath(filepath),
     segmentIndex,
@@ -34,6 +38,7 @@ export const getHlsSegment = async (
     duration,
     videoRef,
   );
+
   return new Response(outputSegment.stream(), {
     headers: { "Content-Type": "video/mp2t" },
   });

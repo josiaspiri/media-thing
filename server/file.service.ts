@@ -58,11 +58,13 @@ export class FileService {
 
   async getFiles(): Promise<string[]> {
     const glob = new Bun.Glob(`**/*.{${this.formats.join(",")}}`);
+
     return await Array.fromAsync(glob.scan({ cwd: this.directory }));
   }
 
   async getFileRefs(): Promise<{ id: string; filename: string }[]> {
     if (this.cache.size === 0) await this.populateCache();
+
     return [...this.cache.entries()].map(([id, { filename, duration }]) => ({
       id,
       filename,
@@ -73,6 +75,7 @@ export class FileService {
   getByRef(ref: string): FileInfo | undefined {
     const fileInfo = this.cache.get(ref);
     if (!fileInfo) return undefined;
+
     return this.cache.get(ref);
   }
 
